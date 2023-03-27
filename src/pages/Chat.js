@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Table } from "react-bootstrap";
-import { createChatCompletionFn } from '../components/chatGPTchatCompletion';
+import { createChatCompletionFn, handleUserInput } from '../components/chatGPTchatCompletion';
 import { API } from "./api";
+const addToCartRegex = /add\s(.+?)(\sto\s(cart|basket))?|add\s(.+)/i;
+const cartTotalRegex = /\b(cart|basket)\b.*\b(total|price)\b/i;
 
-function Chat() {
+function Chat () {
     const [products, setProducts] = useState([]);
+    const [cartProducts, setCartProducts] = useState([]);
     const [prompt, setPrompt] = useState("");
     const [response, setResponse] = useState("");
     const [loading, setLoading] = useState("");
@@ -23,8 +26,13 @@ function Chat() {
         if (validateForm()) {
             try {
                 setLoading(true);
-                const data = await createChatCompletionFn(prompt, products);
-                setResponse(data);
+                if (addToCartRegex.test(prompt) || cartTotalRegex.test(prompt)) {
+                    const data = handleUserInput(prompt, products, cartProducts);
+                    setResponse(data);
+                } else {
+                    const data = await createChatCompletionFn(prompt, products);
+                    setResponse(data);
+                }
             } catch (err) {
                 console.log(err);
                 setResponse("Error fetching data from open Ai");
@@ -45,16 +53,21 @@ function Chat() {
 
     useEffect(() => {
         axios
-            // .get("https://dummyjson.com/products?limit=70")
             .get(`${API}/getProduct`)
             .then(({ data }) => {
-                console.log(data);
-                // setProducts(data?.products);
                 setProducts(data.data);
             })
             .catch((error) => {
                 console.log(error);
             });
+        axios.get(`${API}/getCart`)
+            .then(({ data }) => {
+                setCartProducts(data?.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
     }, []);
 
     return (
