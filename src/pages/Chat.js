@@ -5,6 +5,7 @@ import { createChatCompletionFn, handleUserInput } from '../components/chatGPTch
 import { API } from "./api";
 const addToCartRegex = /add\s(.+?)(\sto\s(cart|basket))?|add\s(.+)/i;
 const cartTotalRegex = /\b(cart|basket)\b.*\b(total|price)\b/i;
+const cartItemsRegex = /(what is|show me|get) (my )?(cart items|cart|shopping cart)/i;
 
 function Chat () {
     const [products, setProducts] = useState([]);
@@ -26,8 +27,9 @@ function Chat () {
         if (validateForm()) {
             try {
                 setLoading(true);
-                if (addToCartRegex.test(prompt) || cartTotalRegex.test(prompt)) {
-                    const data = handleUserInput(prompt, products, cartProducts);
+                if (addToCartRegex.test(prompt) || cartTotalRegex.test(prompt) || cartItemsRegex.exec(prompt)) {
+                    const data = await handleUserInput(prompt, products, cartProducts);
+                    console.log("userhandle");
                     setResponse(data);
                 } else {
                     const data = await createChatCompletionFn(prompt, products);
@@ -40,7 +42,7 @@ function Chat () {
                 setLoading(false);
             }
         }
-    }, [products, prompt, validateForm]);
+    }, [products, prompt, validateForm, cartProducts]);
 
     const handleKeyPress = useCallback(
         (e) => {
@@ -68,7 +70,7 @@ function Chat () {
                 console.log(error);
             });
 
-    }, []);
+    }, [response]);
 
     return (
         <>
@@ -104,7 +106,7 @@ function Chat () {
                         <div className="chatbot-response">
                             <p>Answer:</p>
                             {loading ? 'Processing...' : response ? '' : 'Enter Your Query'}
-                            {response && <p>{response}</p>}
+                            {loading ? null : response && <p>{response}</p>}
                         </div>
                     </div>
                 </div>
