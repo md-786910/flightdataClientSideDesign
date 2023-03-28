@@ -12,6 +12,7 @@ import Home from './pages/Home';
 import Cart from './pages/Cart';
 import Footer from './components/Footer/Footer';
 import Chat from './pages/Chat';
+import Quotation from './pages/Quotation';
 function App() {
 
 
@@ -48,6 +49,7 @@ function App() {
           <Route path="/" element={<Home key={Math.random()} getLen={getLen} />} />
           <Route path="/carts" element={<Cart getLen={getLen} />} />
           <Route path='/chat' element={<Chat />} />
+          <Route path='/getQuotation' element={<Quotation />} />
 
         </Routes>
 

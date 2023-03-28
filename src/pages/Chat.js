@@ -7,7 +7,7 @@ const addToCartRegex = /add\s(.+?)(\sto\s(cart|basket))?|add\s(.+)/i;
 const cartTotalRegex = /\b(cart|basket)\b.*\b(total|price)\b/i;
 const cartItemsRegex = /(what is|show me|get) (my )?(cart items|cart|shopping cart)/i;
 
-function Chat () {
+function Chat() {
     const [products, setProducts] = useState([]);
     const [cartProducts, setCartProducts] = useState([]);
     const [prompt, setPrompt] = useState("");
@@ -74,7 +74,7 @@ function Chat () {
 
     return (
         <>
-            <div className="container " style={{ marginTop: "6em" }}>
+            <div className="container spacer" >
                 <div className="card">
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
