@@ -31,13 +31,23 @@ const Navbar = (props) => {
 
                         </ul>
 
-                        <div className="menuBox" style={{ marginLeft: "1em" }}>
-                            <Link to="/carts">
-                                <div className="cartIconsBox">
-                                    <AiOutlineShoppingCart className='iconCart' size={25} color={"white"} />
-                                    <span class="badge bg-danger">{cartLenght}</span>
-                                </div>
-                            </Link>
+                        <div className="menuBox d-flex gap-4" style={{ marginLeft: "1em" }}>
+                            <div>
+                                <Link to="/getQuotation">
+                                    <div className="cartIconsBox">
+                                        <button class="btn btn-outline-warning text-white">Qoutations</button>
+                                    </div>
+                                </Link>
+                            </div>
+
+                            <div>
+                                <Link to="/carts">
+                                    <div className="cartIconsBox">
+                                        <AiOutlineShoppingCart className='iconCart' size={25} color={"white"} />
+                                        <span class="badge bg-danger">{cartLenght}</span>
+                                    </div>
+                                </Link>
+                            </div>
                         </div>
 
                     </div>

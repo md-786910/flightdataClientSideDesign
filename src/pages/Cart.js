@@ -64,7 +64,7 @@ function Cart(props) {
 
         <Container fluid className="p-0 ">
             <div className="spacer">
-                <h2 className='topH1Space'>
+                <h2 className=''>
                     Your Cart
                 </h2>
                 <div className="loader mt-4">
