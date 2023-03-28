@@ -9,7 +9,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-export async function createChatCompletionFn (prompt, productsData) {
+export async function createChatCompletionFn (prompt, productsData, isCart = false) {
     const tablefields = [
         "productName",
         "description",
@@ -24,8 +24,8 @@ export async function createChatCompletionFn (prompt, productsData) {
         )
         .join("\n");
     const tableFieldsString = tablefields.join(", ");
-
-    const query = `${prompt}\nuse only following data to answer\n\n${tableFieldsString} are the headers and \n${productsDataString} is the data respectively for those headers`;
+    prompt = isCart ? 'tell me about these items in short, and call them cart items' : prompt;
+    const query = `${prompt} , I have provided you the necessary information here:-, \n\n ${tableFieldsString} are the table headers and \n ${productsDataString} is the data respectively for those table headers`;
     const { data } = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: [
@@ -40,11 +40,12 @@ export async function createChatCompletionFn (prompt, productsData) {
 }
 
 // Regular expressions for matching user queries
-const addToCartRegex = /add\s(.+?)(\sto\s(cart|basket))?|add\s(.+)/i;
+const addToCartRegex = /add\s+([\w\s]+)\s+to\s+cart/i;;
 const cartTotalRegex = /(cart\s+(total|price))|((total|price)\s+cart)/i;
+const cartItemsRegex = /(what is|show me|get) (my )?(cart items|cart|shopping cart)/i;
 
 // Function to handle user input and call the appropriate API
-export function handleUserInput (input, products = [], cartProducts) {
+export async function handleUserInput (input, products = [], cartProducts) {
     if (addToCartRegex.test(input)) {
         const productName = findProductName(input);
         console.log(productName);
@@ -57,9 +58,9 @@ export function handleUserInput (input, products = [], cartProducts) {
         }
     } else if (cartTotalRegex.test(input)) {
         return `Your cart total is ₹${getCartTotal(cartProducts)}`;
-    } else {
-        return "I'm sorry, I didn't understand your query";
-    }
+    } else if (cartItemsRegex.exec(input)) {
+        return createChatCompletionFn(input, cartProducts, true);
+    } else return "I'm sorry, I didn't understand your query";
 }
 
 // Function to add a product to the cart
@@ -78,15 +79,14 @@ function getCartTotal (cartProducts) {
 function calculateCartTotal (products) {
     let totalPrice = 0;
     for (let i = 0; i < products?.length; i++) {
-        totalPrice += products[i]?.price * products?.length;
+        totalPrice += products[i]?.price;
     }
     return totalPrice;
 }
 
 // Helper function to extract the product name from user input
 function findProductName (userInput) {
-    // const regex = /add\s+([a-zA-Z\d\s]+)\s+to\s+cart/i;  for "add iphone to cart"
-    const regex = /add\s+([\w\d\s]+)(?:\sto\s(cart|basket))?/i; // for " add iphone"  and "add iphone to cart" both
+    const regex = /add\s+([\w\s]+)\s+to\s+cart/i;
     const match = regex.exec(userInput);
     const productName = match && match[1]?.trim();
     if (productName) {
