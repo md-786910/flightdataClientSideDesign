@@ -4,30 +4,30 @@ import axios from 'axios';
 import { Col, Container, Row, Spinner } from 'react-bootstrap'
 import { API } from './api';
 import { addSpinner, showToastError, removeSpinner, showToastSuccess } from './utils';
+import { Link } from 'react-router-dom';
 
 function Quotation(props) {
 
-    const getQuotation = async (event) => {
+    const [link, setLink] = useState("");
+
+    const getQuotation = async () => {
         try {
-            addSpinner(event)
-            const resp = await axios.get("http://localhost:5000/getQuotation");
+            const resp = await axios.get(`${API}/getQuotation`);
             if (resp.data.success) {
-
-                // event.target.download = resp.data.data;
-                window.location.href = resp.data.data;
-
-                // resp.data.data
-                removeSpinner(event, "generate quotation")
-                showToastSuccess("Quotation download successfully")
+                setLink(resp.data.data);
             } else {
-                showToastError("unable to download Quotation")
+                showToastError("unable to get Quotation")
             }
 
         } catch (error) {
-            showToastError("unable to download Quotation")
+            console.log(error);
+            showToastError("something error")
         }
 
     }
+    useEffect(() => {
+        getQuotation();
+    }, [])
 
     return (
         <Container fluid className="p-0">
@@ -35,7 +35,11 @@ function Quotation(props) {
 
                 <div className="qoutationBox d-flex gap-4">
 
-                    <button className=" btn btn-success" onClick={(event) => getQuotation(event)} style={{ width: "15%" }}>generate quotation</button>
+
+
+                    <a href={link} download={"quotation"} className='d-block'>
+                        <button className=" btn btn-success" >generate quotation</button>
+                    </a>
 
                 </div>
 
