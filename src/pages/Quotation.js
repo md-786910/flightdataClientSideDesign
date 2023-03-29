@@ -13,6 +13,8 @@ function Quotation(props) {
     const getQuotation = async () => {
         try {
             const resp = await axios.get(`${API}/getQuotation`);
+
+            console.log("resp" + resp.data.data);
             if (resp.data.success) {
                 setLink(resp.data.data);
             } else {
