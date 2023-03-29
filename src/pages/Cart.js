@@ -3,10 +3,9 @@ import axios from 'axios';
 
 import { Col, Container, Row, Spinner } from 'react-bootstrap'
 import { API } from './api';
+import { addSpinner, removeSpinner, showToastError, showToastSuccess } from './utils';
 
 function Cart(props) {
-
-
 
     const [loader, setLoader] = useState(true);
     const [product, setProduct] = useState([])
@@ -16,17 +15,19 @@ function Cart(props) {
             const resp = await axios(`${API}/getCart`)
             if (resp.data.success) {
                 setProduct(resp.data.data)
-                props.getLen(resp.data.data)
+
                 setLoader(false)
             } else {
                 return;
             }
         } catch (error) {
-            alert(error.message)
+            showToastError("fetching from cart failed")
+
         }
     }
 
-    const deleteCart = async (id) => {
+    const deleteCart = async (event, id) => {
+        addSpinner(event);
         try {
             const resp = await fetch(`${API}/deleteCart`, {
                 method: "POST",
@@ -40,14 +41,15 @@ function Cart(props) {
             if (data.success) {
                 setLoader(false)
                 fetchCart();
-                // window.location.reload();
-
+                showToastSuccess("item deleted successfully")
+                props.getLen(Math.random())
+                removeSpinner(event, "Remove");
             } else {
                 return;
             }
         } catch (error) {
-            // alert(error.message)
-            console.log(error);
+            showToastError("deleted from cart failed")
+
         }
     }
 
@@ -89,7 +91,7 @@ function Cart(props) {
                                                 Rs : <span class="card-text">{d.price}</span>
                                                 <br />
                                                 <br />
-                                                <button className='btn btn-danger' onClick={() => deleteCart(d._id)}>Remove </button>
+                                                <button className='w-100 btn btn-danger' onClick={(event) => deleteCart(event, d._id)}>Remove </button>
                                             </div>
                                         </div>
                                     </Col>

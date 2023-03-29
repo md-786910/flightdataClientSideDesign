@@ -3,10 +3,9 @@ import axios from 'axios';
 
 import { Col, Container, Row, Spinner } from 'react-bootstrap'
 import { API } from './api';
+import { addSpinner, removeSpinner, showToast, showToastError, showToastSuccess } from './utils';
 
 function Home(props) {
-
-
     const [loader, setLoader] = useState(true);
     const [product, setProduct] = useState([])
 
@@ -15,17 +14,21 @@ function Home(props) {
             const resp = await axios(`${API}/getProduct`)
             if (resp.data.success) {
                 setProduct(resp.data.data)
+                // showToastSuccess("fetch data product")
                 setLoader(false)
             } else {
                 return;
             }
         } catch (error) {
-            alert(error.message)
+            showToastError("fetching data product failed")
         }
     }
 
 
-    const addToCart = async (id) => {
+
+
+    const addToCart = async (event, id) => {
+        addSpinner(event);
         try {
             const resp = await fetch(`${API}/carts`, {
                 method: "POST",
@@ -34,18 +37,19 @@ function Home(props) {
                 },
                 body: JSON.stringify({ id: id })
             })
-            setLoader(true)
             const data = await resp.json();
             if (data.success) {
-                // window.location.reload();
-                setLoader(false)
-                fetchProduct();
+                props.getLen(Math.random())
+                showToastSuccess("add to cart successfully")
+                removeSpinner(event, "add to cart")
             } else {
                 return;
             }
         } catch (error) {
-            console.log(error);
+            showToastError("add to cart failed")
+
         }
+
     }
 
 
@@ -54,11 +58,6 @@ function Home(props) {
         fetchProduct();
         // eslint-disable-next-line
     }, [])
-
-
-
-
-
 
     return (
         <Container fluid className="p-0">
@@ -77,7 +76,7 @@ function Home(props) {
                     {
                         product && product.map((d, index) => {
                             return (
-                                <Col lg={3} className="mb-4" key={index} style={{ width: "25%" }}>
+                                <Col lg={3} className="mb-4" key={index} >
                                     <div class="card" >
                                         <img src={d.image} class="card-img-top img-size" alt="img" />
                                         <div class="card-body">
@@ -86,7 +85,9 @@ function Home(props) {
                                             Rs : <span class="card-text">{d.price}</span>
                                             <br />
                                             <br />
-                                            <button className='btn btn-secondary' onClick={() => addToCart(d._id)}>Add to cart</button>
+                                            <button className='btn btn-success w-100' onClick={(event) => addToCart(event, d._id)}>
+                                                add to cart
+                                            </button>
                                         </div>
                                     </div>
                                 </Col>
