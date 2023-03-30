@@ -17,7 +17,6 @@ function Chat() {
     const [loading, setLoading] = useState("");
 
     const validateForm = useCallback(() => prompt !== "", [prompt]);
-
     const handleReset = useCallback((e) => {
         e.preventDefault();
         setPrompt("");

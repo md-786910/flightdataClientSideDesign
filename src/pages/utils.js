@@ -60,14 +60,12 @@ export const generateQuotation = async (event) => {
 
 export const generateQuotationPdfCart = async (event) => {
     try {
-        const resp = await axios.get(`${API}/jsontopdf`, {
-            headers: {
-                'Content-Type': 'application/pdf',
-                'Content-Disposition': 'attachment; filename=file.pdf'
-            }
-        });
+        const resp = await axios.get(`${API}/jsontopdf`);
         if (resp.data) {
             showToastSuccess("successfully quotation generated")
+            const url = `${API}/pdf/cart.pdf`;
+            await window.open(url, '_blank').focus();
+
             return true;
         } else {
             showToastError("unable to generate Quotation")
