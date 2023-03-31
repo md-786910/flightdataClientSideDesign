@@ -35,7 +35,7 @@ const Navbar = (props) => {
                             <div>
                                 <Link to="/getQuotation">
                                     <div className="cartIconsBox">
-                                        <button class="btn btn-outline-warning text-white">Qoutations</button>
+                                        <button class="btn btn-outline-warning text-white">Quotations</button>
                                     </div>
                                 </Link>
                             </div>
