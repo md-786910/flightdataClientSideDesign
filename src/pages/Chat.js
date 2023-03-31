@@ -3,7 +3,9 @@ import axios from "axios";
 import { Table } from "react-bootstrap";
 import { createChatCompletionFn, handleUserInput } from '../components/chatGPTchatCompletion';
 import { API } from "./api";
-import { generateQuotation, generateQuotationPdfCart } from "./utils";
+
+import { generateQuotationPdfCart } from "./utils";
+
 const addToCartRegex = /add\s(.+?)(\sto\s(cart|basket))?|add\s(.+)/i;
 const cartTotalRegex = /\b(cart|basket)\b.*\b(total|price)\b/i;
 const cartItemsRegex = /(what is|show me|get) (my )?(cart items|cart|shopping cart)/i;

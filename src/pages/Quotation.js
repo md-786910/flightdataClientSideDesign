@@ -70,7 +70,7 @@ function Quotation(props) {
                                                 <tr key={index}>
                                                     <th scope="row">{index + 1}</th>
                                                     <td>
-                                                        <a href={d.cloudinaryUrl} download="quote" target="_blank" rel="noreferrer">download quotation</a>
+                                                        <a href={d.cloudinaryUrl} download="quote" target="_blank" rel="noreferrer">{d.cloudinaryUrl}</a>
                                                     </td>
                                                 </tr>
                                             )
