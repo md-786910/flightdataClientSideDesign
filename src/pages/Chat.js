@@ -4,14 +4,14 @@ import { Table } from "react-bootstrap";
 import { createChatCompletionFn, handleUserInput } from '../components/chatGPTchatCompletion';
 import { API } from "./api";
 
-import { generateQuotationPdfCart } from "./utils";
+import { generateQuotation, generateQuotationPdfCart } from "./utils";
 
 const addToCartRegex = /add\s(.+?)(\sto\s(cart|basket))?|add\s(.+)/i;
 const cartTotalRegex = /\b(cart|basket)\b.*\b(total|price)\b/i;
 const cartItemsRegex = /(what is|show me|get) (my )?(cart items|cart|shopping cart)/i;
 const generateQuotationRegex = /^(generate|create)\s(quotation|pdf)$/;
 
-function Chat() {
+function Chat () {
     const [products, setProducts] = useState([]);
     const [cartProducts, setCartProducts] = useState([]);
     const [prompt, setPrompt] = useState("");
@@ -37,7 +37,7 @@ function Chat() {
                     setResponse(data);
                 }
                 else if (generateQuotationRegex.test(prompt) || generateQuotationRegex.exec(prompt)) {
-                    const resp = await generateQuotationPdfCart(e)
+                    await generateQuotation(e)
                 }
                 else {
                     const data = await createChatCompletionFn(prompt, products);
