@@ -3,11 +3,15 @@ import axios from "axios";
 import { Table } from "react-bootstrap";
 import { createChatCompletionFn, handleUserInput } from '../components/chatGPTchatCompletion';
 import { API } from "./api";
+
+import { generateQuotationPdfCart } from "./utils";
+
 const addToCartRegex = /add\s(.+?)(\sto\s(cart|basket))?|add\s(.+)/i;
 const cartTotalRegex = /\b(cart|basket)\b.*\b(total|price)\b/i;
 const cartItemsRegex = /(what is|show me|get) (my )?(cart items|cart|shopping cart)/i;
+const generateQuotationRegex = /^(generate|create)\s(quotation|pdf)$/;
 
-function Chat () {
+function Chat() {
     const [products, setProducts] = useState([]);
     const [cartProducts, setCartProducts] = useState([]);
     const [prompt, setPrompt] = useState("");
@@ -15,7 +19,6 @@ function Chat () {
     const [loading, setLoading] = useState("");
 
     const validateForm = useCallback(() => prompt !== "", [prompt]);
-
     const handleReset = useCallback((e) => {
         e.preventDefault();
         setPrompt("");
@@ -23,6 +26,7 @@ function Chat () {
     }, []);
 
     const handleSubmit = useCallback(async (e) => {
+
         e.preventDefault();
         if (validateForm()) {
             try {
@@ -31,7 +35,11 @@ function Chat () {
                     const data = await handleUserInput(prompt, products, cartProducts);
                     console.log("userhandle");
                     setResponse(data);
-                } else {
+                }
+                else if (generateQuotationRegex.test(prompt) || generateQuotationRegex.exec(prompt)) {
+                    const resp = await generateQuotationPdfCart(e)
+                }
+                else {
                     const data = await createChatCompletionFn(prompt, products);
                     setResponse(data);
                 }
@@ -74,10 +82,10 @@ function Chat () {
 
     return (
         <>
-            <div className="container " style={{ marginTop: "6em" }}>
+            <div className="container spacer" >
                 <div className="card">
                     <div className="card-body">
-                        <form onSubmit={handleSubmit}>
+                        <div >
                             <div className="form-group mb-3">
                                 <label className="chatbot-header">Ask your query</label>
                                 <input
@@ -91,7 +99,7 @@ function Chat () {
                                 />
                             </div>
                             <div className="form-group">
-                                <button type="submit" className="btn btn-primary" >
+                                <button type="submit" className="btn btn-primary" onClick={(e) => handleSubmit(e)}>
                                     {loading ? 'Searching...' : 'Search'}
                                 </button>
                                 <button
@@ -102,7 +110,7 @@ function Chat () {
                                     Clear
                                 </button>
                             </div>
-                        </form>
+                        </div>
                         <div className="chatbot-response">
                             <p>Answer:</p>
                             {loading ? 'Processing...' : response ? '' : 'Enter Your Query'}
