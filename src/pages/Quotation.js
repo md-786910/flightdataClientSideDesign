@@ -5,8 +5,9 @@ import { Col, Container, Row, Spinner } from 'react-bootstrap'
 import { API } from './api';
 import { addSpinner, showToastError, generateQuotation } from './utils';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 
-function Quotation(props) {
+function Quotation (props) {
 
     const [data, setData] = useState([]);
 
@@ -60,7 +61,8 @@ function Quotation(props) {
                                 <thead>
                                     <tr>
                                         <th scope="col">S No.</th>
-                                        <th scope="col">Pdf Url</th>
+                                        <th scope="col">Quotation PDF Url</th>
+                                        <th scope="col">Created At</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -72,6 +74,7 @@ function Quotation(props) {
                                                     <td>
                                                         <a href={d.cloudinaryUrl} download="quote" target="_blank" rel="noreferrer">{d.cloudinaryUrl}</a>
                                                     </td>
+                                                    <td>{moment(d.createdAt).calendar()}</td>
                                                 </tr>
                                             )
                                         })
