@@ -3,23 +3,34 @@ import axios from "axios";
 import { Table } from "react-bootstrap";
 import { createChatCompletionFn, handleUserInput } from '../components/chatGPTchatCompletion';
 import { API } from "./api";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
-
-import { addSpinner, generateQuotationPdfCart, removeSpinner } from "./utils";
-
-
+import { addSpinner, generateQuotationPdfCart, removeSpinner, generateQuotation, generateProductTable } from "./utils";
+import Model from "../components/Model";
 
 const addToCartRegex = /add\s(.+?)(\sto\s(cart|basket))?|add\s(.+)/i;
 const cartTotalRegex = /\b(cart|basket)\b.*\b(total|price)\b/i;
 const cartItemsRegex = /(what is|show me|get) (my )?(cart items|cart|shopping cart)/i;
 const generateQuotationRegex = /^(generate|create)\s(quotation|pdf)$/;
 
-function Chat () {
+const showProductTableRegex = /(\d+)\s*(\w+)/g;
+
+function Chat() {
     const [products, setProducts] = useState([]);
     const [cartProducts, setCartProducts] = useState([]);
     const [prompt, setPrompt] = useState("");
     const [response, setResponse] = useState("");
     const [loading, setLoading] = useState("");
+    const [productFind, setProductFind] = useState([]);
+
+
+    // model
+
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    // const handleShow = () => setShow(true);
+
 
     const validateForm = useCallback(() => prompt !== "", [prompt]);
     const handleReset = useCallback((e) => {
@@ -41,12 +52,14 @@ function Chat () {
                     setResponse(data);
                 }
                 else if (generateQuotationRegex.test(prompt) || generateQuotationRegex.exec(prompt)) {
-
-                    const resp = await generateQuotationPdfCart(e)
-                    console.log(resp);
-
+                    // const resp = await generateQuotationPdfCart(e)
+                    // console.log(resp);
                     await generateQuotation(e)
 
+                } else if (showProductTableRegex.test(prompt) || showProductTableRegex.exec(prompt)) {
+                    const { data } = await generateProductTable(prompt);
+                    setProductFind(data.data);
+                    setShow(true);
                 }
                 else {
                     const data = await createChatCompletionFn(prompt, products);
@@ -57,6 +70,7 @@ function Chat () {
                 setResponse("Error fetching data from open Ai");
             } finally {
                 setLoading(false);
+                setCartProducts([])
             }
         }
     }, [products, prompt, validateForm, cartProducts]);
@@ -89,12 +103,16 @@ function Chat () {
 
     }, [response]);
 
+
     return (
         <>
+            <Model />
+
             <div className="container spacer" >
                 <div className="card">
                     <div className="card-body">
                         <div >
+
                             <div className="form-group mb-3">
                                 <label className="chatbot-header">Ask your query</label>
                                 <input
@@ -129,6 +147,48 @@ function Chat () {
                 </div>
             </div>
 
+            {/*Model */}
+            <Modal show={show} onHide={handleClose} aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Product Available</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+
+                    <div className="productExp">
+                        <Table striped bordered hover>
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Product Price (in Rs) </th>
+                                    <th>Product Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {productFind?.map((product) => (
+                                    <tr key={product._id}>
+                                        <td>{product?.productName}</td>
+                                        <td>{product.price}</td>
+                                        <td>{product.qty}</td>
+
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+
+                    </div>
+
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+
+                </Modal.Footer>
+            </Modal>
+            {/*Model end */}
+
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -155,6 +215,8 @@ function Chat () {
                     ))}
                 </tbody>
             </Table>
+
+
         </>
     );
 }

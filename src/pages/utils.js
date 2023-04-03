@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { API } from './api';
+import { API, API_1 } from './api';
 
 export const addSpinner = (event) => {
     event.target.innerHTML = '<div class="spinner-border spinner-border-sm text-white " role="status" />';
@@ -99,3 +99,25 @@ export const generateQuotationPdfCart = async (event) => {
 
     return true;
 }
+
+export const generateProductTable = async (prompt) => {
+    try {
+
+        const split = prompt.split(/(,| and )/);
+        const regex = /(\d+)\s+(\w+\s?\w+\s?[0-9]?)/g;
+        let match;
+        let products = [];
+        split.forEach((item, index) => {
+            if (index % 2 === 0) {
+                while ((match = regex.exec(item)) !== null) {
+                    products.push(({ product: match[2], quantity: match[1] }))
+                }
+            }
+        })
+        const productPresent = await axios.post(`${API}/getProductPresent`, { products });
+        return productPresent
+    } catch (error) {
+
+    }
+}
+
