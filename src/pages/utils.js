@@ -37,7 +37,7 @@ export const showToastError = (text) => {
 export const generateQuotation = async (event) => {
     addSpinner(event);
     try {
-        const resp = await axios.get(`${API}/generate-pdf`);
+        const resp = await axios.get(`${API}/jsontopdf-1`);
 
         console.log(resp.data.data);
         if (resp.data.success) {
