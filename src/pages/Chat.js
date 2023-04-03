@@ -4,7 +4,7 @@ import { Table } from "react-bootstrap";
 import { createChatCompletionFn, handleUserInput } from '../components/chatGPTchatCompletion';
 import { API } from "./api";
 
-import { generateQuotationPdfCart } from "./utils";
+import { addSpinner, generateQuotationPdfCart, removeSpinner } from "./utils";
 
 const addToCartRegex = /add\s(.+?)(\sto\s(cart|basket))?|add\s(.+)/i;
 const cartTotalRegex = /\b(cart|basket)\b.*\b(total|price)\b/i;
@@ -27,7 +27,8 @@ function Chat() {
 
     const handleSubmit = useCallback(async (e) => {
 
-        e.preventDefault();
+        // e.preventDefault();
+
         if (validateForm()) {
             try {
                 setLoading(true);
@@ -38,6 +39,7 @@ function Chat() {
                 }
                 else if (generateQuotationRegex.test(prompt) || generateQuotationRegex.exec(prompt)) {
                     const resp = await generateQuotationPdfCart(e)
+                    console.log(resp);
                 }
                 else {
                     const data = await createChatCompletionFn(prompt, products);
@@ -104,7 +106,7 @@ function Chat() {
                                 </button>
                                 <button
                                     type="reset"
-                                    className="btn btn-secondary ml-2"
+                                    className="btn btn-secondary mx-2"
                                     onClick={handleReset}
                                 >
                                     Clear

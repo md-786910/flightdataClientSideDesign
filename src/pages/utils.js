@@ -56,15 +56,28 @@ export const generateQuotation = async (event) => {
     }
 }
 
+
+
 export const generateQuotationPdfCart = async (event) => {
     try {
+        // const resp = await axios.get(`${API}/jsontopdf`, {
+        //     url: `${API}/jsontopdf`
+
+        // });
+
+        addSpinner(event);
+
+
         axios.get(`${API}/jsontopdf`, { responseType: 'blob' }).then(res => {
-            downloadFile(res);
-            showToastSuccess("successfully quotation generated")
+            console.log(res);
+            removeSpinner(event, "search")
+            let ch = downloadFile(res);
+
         }).catch(err => {
             showToastError("unable to generate Quotation")
             return false;
         });
+
         const downloadFile = (res) => {
             const contentDisposition = res.headers['content-disposition'];
             const fileName = contentDisposition.split(';')[1].split('=')[1];
@@ -75,10 +88,14 @@ export const generateQuotationPdfCart = async (event) => {
             link.setAttribute('download', `${fileName}`);
             document.body.appendChild(link);
             link.click();
+            return true
         }
-
     } catch (error) {
         showToastError("something error")
         return false;
+    } finally {
+        removeSpinner(event, "search")
     }
+
+    return true;
 }
