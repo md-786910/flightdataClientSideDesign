@@ -23,7 +23,8 @@ function Chat() {
     const [response, setResponse] = useState("");
     const [loading, setLoading] = useState("");
     const [productFind, setProductFind] = useState([]);
-
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [totalQty, setTotalQty] = useState(0);
 
     // model
 
@@ -59,6 +60,8 @@ function Chat() {
                 } else if (showProductTableRegex.test(prompt) || showProductTableRegex.exec(prompt)) {
                     const { data } = await generateProductTable(prompt);
                     setProductFind(data.data);
+                    setTotalPrice(data?.price);
+                    setTotalQty(data?.qty);
                     setShow(true);
                 }
                 else {
@@ -100,7 +103,6 @@ function Chat() {
             .catch((error) => {
                 console.log(error);
             });
-
     }, [response]);
 
 
@@ -175,6 +177,24 @@ function Chat() {
                                     </tr>
                                 ))}
                             </tbody>
+                            <tr>
+                                <td>
+                                    <h4>Total Quantity</h4>
+                                </td>
+                                <td> <h4> = </h4></td>
+                                <td>
+                                    <h4>{totalQty}</h4>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h4>Total Price</h4>
+                                </td>
+                                <td> <h4> = </h4></td>
+                                <td>
+                                    <h4>{totalPrice.toLocaleString('en-IN')} Rs</h4>
+                                </td>
+                            </tr>
                         </Table>
 
                     </div>
