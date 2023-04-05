@@ -77,17 +77,23 @@ function Home(props) {
                         product && product.map((d, index) => {
                             return (
                                 <Col lg={3} className="mb-4" key={index} >
-                                    <div class="card" >
-                                        <img src={d.image} class="card-img-top img-size" alt="img" />
+                                    <div class="card" style={{ height: "27em" }} >
+                                        <div style={{ width: "70%", margin: "1em auto" }}>
+                                            <img src={d.image} class="card-img-top img-size" style={{ height: "17vh" }} alt="img" />
+                                        </div>
                                         <div class="card-body">
                                             <h5 class="card-title">{d.productName}</h5>
-                                            <p class="card-text">{d.description}</p>
-                                            Rs : <span class="card-text">{d.price}</span>
+                                            <p class="card-text">{d.description.slice(0, 60)}...</p>
+                                            <span class="card-text">Price : {parseInt(d.price).toLocaleString('en-IN')} Rs</span>
+                                            <br />
+                                            <span class="card-text">Qty : {d.qty.toLocaleString('en-IN')}</span>
                                             <br />
                                             <br />
-                                            <button className='btn btn-success w-100' onClick={(event) => addToCart(event, d._id)}>
-                                                add to cart
-                                            </button>
+                                            <div style={{ position: "relative", top: "0", height: "5em" }}>
+                                                <button className='btn btn-success w-100' style={{ position: "relative", bottom: "-2em" }} onClick={(event) => addToCart(event, d._id)}>
+                                                    add to cart
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </Col>

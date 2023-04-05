@@ -108,7 +108,6 @@ function Chat() {
 
     return (
         <>
-            <Model />
 
             <div className="container spacer" >
                 <div className="card">
@@ -147,18 +146,16 @@ function Chat() {
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/*Model */}
-            <Modal show={show} onHide={handleClose} aria-labelledby="contained-modal-title-vcenter"
-                centered
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>Product Available</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
+                <div className="showTitle mt-5">
+                    <h5>
+                        Your Response :
+                    </h5>
+                </div>
 
-                    <div className="productExp">
+                {
+                    productFind.length > 0 ? <div className="productExp mt-4">
+
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
@@ -177,64 +174,39 @@ function Chat() {
                                     </tr>
                                 ))}
                             </tbody>
+
                             <tr>
                                 <td>
-                                    <h4>Total Quantity</h4>
+                                    <h5>Total Quantity</h5>
                                 </td>
-                                <td> <h4> = </h4></td>
+                                <td> <h5> = </h5></td>
                                 <td>
-                                    <h4>{totalQty}</h4>
+                                    <h5>{totalQty}</h5>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <h4>Total Price</h4>
+                                    <h5>Total Price</h5>
                                 </td>
-                                <td> <h4> = </h4></td>
+                                <td> <h5> = </h5></td>
                                 <td>
-                                    <h4>{totalPrice.toLocaleString('en-IN')} Rs</h4>
+                                    <h5>{totalPrice.toLocaleString('en-IN')} Rs</h5>
                                 </td>
                             </tr>
+
                         </Table>
 
-                    </div>
+                    </div> : <h5>No response please type query in search box!</h5>
+                }
 
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
 
-                </Modal.Footer>
-            </Modal>
-            {/*Model end */}
+                {/*Table for product removed */}
 
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>Product ID</th>
-                        <th>Product Name</th>
-                        <th>Product Description</th>
-                        <th>Product Price (in Rs) </th>
-                        <th>Product Qty</th>
-                        <th>Image</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {products?.map((product) => (
-                        <tr key={product._id}>
-                            <td>{product?._id}</td>
-                            <td>{product?.productName}</td>
-                            <td>{product?.description}</td>
-                            <td>{product.price}</td>
-                            <td>{product.qty}</td>
-                            <td style={{ width: "10%" }}>
-                                <img src={product.image} alt="img" style={{ width: "100%" }} />
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+
+
+            </div>
+
+
 
 
         </>
